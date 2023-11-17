@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-kantox
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-kantox
+  template:
+    metadata:
+      labels:
+        app: app-kantox
+    spec:
+      containers:
+      - name: app-kantox
+        image: nginx 
+        ports:
+        - containerPort: 80  
