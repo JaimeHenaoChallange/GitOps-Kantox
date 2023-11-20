@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-kantox
+  name: hello-world-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: app-kantox
+      app: hello-world
   template:
     metadata:
       labels:
-        app: app-kantox
+        app: hello-world
     spec:
       containers:
-      - name: app-kantox
+      - name: hello-world-container
+        #image: arheanja/hello-world-kantox:v2
         image: nginx
-        #image: arheanja/hello-worl-kantox:v2
         ports:
         - containerPort: 80
