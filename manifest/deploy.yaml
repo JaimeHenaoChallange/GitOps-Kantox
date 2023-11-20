@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
       - name: hello-world-container
-        #image: arheanja/hello-world-kantox:v2
-        image: nginx
+        image: arheanja/hello-world-kantox:v2
         ports:
         - containerPort: 80
