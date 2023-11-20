@@ -1,0 +1,9 @@
+{
+  "family": "task-secmanager-dev",
+  "containerDefinitions": [
+    {
+      "name": "vinculacion-secmanager-dev",
+      "image": "350029141915.dkr.ecr.us-east-1.amazonaws.com/vinculacion-secmanager-dev:prueba",
+    }
+  ]
+}
