@@ -1,25 +1,31 @@
-name: Deploy Hello World
+name: Deploy to Minikube
 
 on:
   push:
     branches:
       - main
-      - release
-      - develop
-      - feature_test
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up Kubectl
-      uses: azure/setup-kubectl@v1
-      with:
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: Set up Minikube
+        run: |
+          minikube start
+          minikube kubectl -- apply -f manifest/
 
-    - name: Deploy to Kubernetes
-      run: kubectl apply -f kubeops/manifests
+      - name: Update Container Version
+        run: |
+          # Obtener la versión actual desde el archivo de manifiesto
+          CURRENT_VERSION=$(grep "image:" manifest/deploy.yaml | awk '{print $NF}')
+
+          # Reemplazar la versión con una nueva
+          NEW_VERSION="latest"
+          sed -i "s/$CURRENT_VERSION/$NEW_VERSION/g" manifest/deploy.yaml
+
+          # Actualizar el despliegue en el clúster
+          kubectl apply -f manifest/
