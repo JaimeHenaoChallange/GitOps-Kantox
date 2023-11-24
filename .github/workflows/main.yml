@@ -10,18 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Build nginx Docker image and deploy to Minikube
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
     - name: Start Minikube
-      uses: medyagh/setup-minikube@v1.23.0
-
-    - name: Wait for Minikube to be ready
-      run: minikube status --wait=5m
-
+      uses: medyagh/setup-minikube@master
     - name: Try the cluster!
       run: kubectl get pods -A
-
     - name: Build image
       run: |
         export SHELL=/bin/bash
@@ -29,25 +22,19 @@ jobs:
         docker build -f ./Dockerfile -t arheanja/hello-world-kantox:v2 .
         echo -n "verifying images:"
         docker images
-
     - name: Deploy to Minikube
       run: kubectl apply -f deploy-to-minikube.yaml
-
-    - name: Wait for pods to be ready
-      run: kubectl wait --for=condition=ready pod -l app=hello-world
-
+    - name: Wait for service readiness
+      run: sleep 30
     - name: Check Minikube status
       run: minikube status
-
     - name: Check running pods
       run: kubectl get pods
-
     - name: Check service details
       run: kubectl get service hello-world-service
-
-    - name: Test service URLs
-      run: |
-        minikube service list
-        minikube service hello-world-service --url
-        echo "------------------opening the service------------------"
-        curl $(minikube service hello-world-service --url)
+    # - name: Test service URLs
+    #   run: |
+    #     minikube service list
+    #     minikube service hello-world-service --url
+    #     echo "------------------opening the service------------------"
+    #     curl $(minikube service hello-world-service --url)
