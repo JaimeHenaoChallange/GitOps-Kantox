@@ -33,6 +33,6 @@ jobs:
       with:
         token: ${{ secrets.PAT }}
         #repository: ${{ github.actor }}/GitOps-Kantox
-        repository: JaimeHenaoChallange/GitOps-Kantox
+        repository: JaimeHenaoChallange/GitOps-Kantox/Docker
         event-type: new-image
         client-payload: '{"image": "${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"}'
