@@ -35,14 +35,11 @@ jobs:
 
     # Nuevo paso para el port forward
     - name: Port forward to Minikube service
-      run: kubectl port-forward service/hello-world-service 8080:80 --address 0.0.0.0
-      #background: true
+      run: |
+        PORT=8080
+        kubectl port-forward service/hello-world-service $PORT:80 --address 0.0.0.0 &
+        echo "Port forward to Minikube service is available at localhost:$PORT"
+      env:
+        PORT: 8080
     - name: Wait for port forward to be ready
       run: sleep 5
-
-    # - name: Test service URLs
-    #   run: |
-    #     minikube service list
-    #     minikube service hello-world-service --url
-    #     echo "------------------opening the service------------------"
-    #     curl $(minikube service hello-world-service --url)
