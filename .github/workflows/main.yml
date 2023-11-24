@@ -1,4 +1,4 @@
-name: Deploy to Minikube with ArgoCD
+name: Deploy to Minikube
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   job1:
     runs-on: ubuntu-latest
-    name: Build Docker image and deploy to Minikube with ArgoCD
+    name: Build Docker image and deploy to Minikube
     steps:
     - uses: actions/checkout@v2
     - name: Start Minikube
@@ -21,14 +21,8 @@ jobs:
         docker build -f ./Dockerfile -t arheanja/hello-world-kantox:v2 .
         echo "verifying images:"
         docker images
-    - name: Install ArgoCD CLI
-      run: |
-        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        chmod +x /usr/local/bin/argocd
-    - name: Deploy to Minikube with ArgoCD
-      run: |
-        kubectl apply -f deploy-to-minikube.yaml
-        argocd app sync hello-world-app --insecure --server argocd-server.minikube.svc
+    - name: Deploy to Minikube
+      run: kubectl apply -f deploy-to-minikube.yaml
     - name: Wait for service readiness
       run: sleep 30
     - name: Check Minikube status
