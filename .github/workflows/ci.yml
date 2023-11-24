@@ -32,6 +32,7 @@ jobs:
       uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.PAT }}
-        repository: ${{ github.actor }}/GitOps-Kantox
+        #repository: ${{ github.actor }}/GitOps-Kantox
+        repository: JaimeHenaoChallange/GitOps-Kantox
         event-type: new-image
         client-payload: '{"image": "${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"}'
