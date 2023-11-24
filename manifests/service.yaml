@@ -6,7 +6,7 @@ spec:
   selector:
     app: hello-world
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: LoadBalancer
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort  # Cambiado a NodePort para Minikube

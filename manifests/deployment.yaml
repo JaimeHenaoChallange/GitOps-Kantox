@@ -13,7 +13,7 @@ spec:
         app: hello-world
     spec:
       containers:
-      - name: hello-world
+      - name: hello-world-container
         image: arheanja/hello-world-kantox:v2
         ports:
-        - containerPort: 8080
+        - containerPort: 80
