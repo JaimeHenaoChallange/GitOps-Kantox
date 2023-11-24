@@ -28,7 +28,7 @@ jobs:
     - name: Deploy to Minikube with ArgoCD
       run: |
         kubectl apply -f deploy-to-minikube.yaml
-        argocd app sync hello-world-app
+        argocd app sync hello-world-app --insecure --server argocd-server.minikube.svc
     - name: Wait for service readiness
       run: sleep 30
     - name: Check Minikube status
