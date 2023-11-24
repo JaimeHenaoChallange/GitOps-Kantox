@@ -27,7 +27,7 @@ jobs:
         chmod +x /usr/local/bin/argocd
     - name: Deploy to Minikube with ArgoCD
       run: |
-        kubectl apply -f path/to/your/deploy-to-minikube.yaml
+        kubectl apply -f deploy-to-minikube.yaml
         argocd app sync hello-world-app
     - name: Wait for service readiness
       run: sleep 30
