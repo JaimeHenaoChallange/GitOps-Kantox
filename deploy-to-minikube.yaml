@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
       - name: hello-world-container
-        image: arheanja/hello-world-kantox:v1
+        image: arheanja/hello-world-kantox:v2
         ports:
-        - containerPort: 8080
+        - containerPort: 80
 
 ---
 
@@ -29,6 +29,6 @@ spec:
     app: hello-world
   ports:
   - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 80
+    targetPort: 80
   type: NodePort  # Cambiado a NodePort para Minikube

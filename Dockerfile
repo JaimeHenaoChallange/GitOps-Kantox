@@ -5,7 +5,7 @@ FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/
 
 # Puerto en el que escuchará Nginx
-EXPOSE 8080
+EXPOSE 80
 
 # Comando para iniciar Nginx cuando se ejecute el contenedor
 CMD ["nginx", "-g", "daemon off;"]
