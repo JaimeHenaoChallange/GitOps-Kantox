@@ -34,6 +34,17 @@ jobs:
     - name: Test service URLs
       run: |
         minikube service list
-        minikube service hello-world-service --url
+        SERVICE_URL=$(minikube service hello-world-service --url)
         echo "------------------opening the service------------------"
-        xdg-open $(minikube service hello-world-service --url)
+        echo "Service URL: $SERVICE_URL"
+        if command -v xdg-open >/dev/null 2>&1; then
+          xdg-open $SERVICE_URL
+        elif command -v open >/dev/null 2>&1; then
+          open $SERVICE_URL
+        elif command -v gnome-open >/dev/null 2>&1; then
+          gnome-open $SERVICE_URL
+        elif command -v start >/dev/null 2>&1; then
+          start $SERVICE_URL
+        else
+          echo "Cannot open browser automatically. Please open the URL in your preferred browser."
+        fi
