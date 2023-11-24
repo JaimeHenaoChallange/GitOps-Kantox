@@ -36,7 +36,7 @@ jobs:
     # Nuevo paso para el port forward
     - name: Port forward to Minikube service
       run: kubectl port-forward service/hello-world-service 8080:80 --address 0.0.0.0
-      background: true
+      #background: true
     - name: Wait for port forward to be ready
       run: sleep 5
 
