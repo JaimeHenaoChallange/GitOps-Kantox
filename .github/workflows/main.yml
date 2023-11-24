@@ -1,4 +1,4 @@
-name: Deploy to Minikube
+name: Deploy to Minikube using Github Actions
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   job1:
     runs-on: ubuntu-latest
-    name: Build Docker image and deploy to Minikube
+    name: Build nginx Docker image and deploy to Minikube
     steps:
     - uses: actions/checkout@v2
     - name: Start Minikube
@@ -17,9 +17,10 @@ jobs:
       run: kubectl get pods -A
     - name: Build image
       run: |
+        export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
         docker build -f ./Dockerfile -t arheanja/hello-world-kantox:v2 .
-        echo "verifying images:"
+        echo -n "verifying images:"
         docker images
     - name: Deploy to Minikube
       run: kubectl apply -f deploy-to-minikube.yaml
@@ -34,17 +35,6 @@ jobs:
     - name: Test service URLs
       run: |
         minikube service list
-        SERVICE_URL=$(minikube service hello-world-service --url)
+        minikube service hello-world-service --url
         echo "------------------opening the service------------------"
-        echo "Service URL: $SERVICE_URL"
-        if command -v xdg-open >/dev/null 2>&1; then
-          xdg-open $SERVICE_URL
-        elif command -v open >/dev/null 2>&1; then
-          open $SERVICE_URL
-        elif command -v gnome-open >/dev/null 2>&1; then
-          gnome-open $SERVICE_URL
-        elif command -v start >/dev/null 2>&1; then
-          start $SERVICE_URL
-        else
-          echo "Cannot open browser automatically. Please open the URL in your preferred browser."
-        fi
+        curl $(minikube service hello-world-service --url)
