@@ -3,9 +3,11 @@
 # on:
 #   repository_dispatch:
 #     types: [new-image]
+
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
+
 #     steps:
 #     - uses: actions/checkout@v2
 
@@ -15,49 +17,50 @@
 #       with:
 #         cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i ./deployment.yaml
 
-#     - uses: stefanzweifel/git-auto-commit-action@v4
-#       with:
-#         commit_message: Apply image name changes
+#     - name: Confirmar Configuración Global de Git
+#       run: |
+#         git config --global user.name || echo "Failed to get user.name"
+#         git config --global user.email || echo "Failed to get user.email"
+#         git config --list || echo "Failed to get git configuration"
 
-name: Repository Dispatch
+#     - name: Configurar Usuario de Git
+#       run: |
+#         git config --global user.name "github-actions[bot]" || echo "Failed to set user.name"
+#         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" || echo "Failed to set user.email"
+
+#     - name: Commit y Push con HTTPS
+#       run: |
+#         git add .
+#         git status
+#         git commit -m "Apply image name changes"
+#         git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git || echo "Failed to set remote URL"
+#         git push origin HEAD:${{ github.ref }} || echo "Failed to push changes"
+#       env:
+#         YOUR_GITHUB_TOKEN: ${{ secrets.PAT }}
+
+name: Actualizar Imagen de Deployment
 
 on:
-  repository_dispatch:
-    types: [new-image]
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
 
 jobs:
-  build:
+  update-deployment:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repositorio
+      uses: actions/checkout@v2
 
-    - name: Update Image Version
-      id: imgupd
-      uses: mikefarah/yq@master
-      with:
-        cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i ./deployment.yaml
-
-    - name: Confirmar Configuración Global de Git
+    - name: Actualizar Imagen en deployment.yaml
       run: |
-        git config --global user.name || echo "Failed to get user.name"
-        git config --global user.email || echo "Failed to get user.email"
-        git config --list || echo "Failed to get git configuration"
-
-    - name: Configurar Usuario de Git
-      run: |
-        git config --global user.name "github-actions[bot]" || echo "Failed to set user.name"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" || echo "Failed to set user.email"
-
-    - name: Commit y Push con HTTPS
-      run: |
-        git add .
-        git status
-        git commit -m "Apply image name changes"
-        git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git || echo "Failed to set remote URL"
-        git push origin HEAD:${{ github.ref }} || echo "Failed to push changes"
-      env:
-        YOUR_GITHUB_TOKEN: ${{ secrets.PAT }}
-
+        sed -i 's|old-image:tag|new-image:tag|g' path/to/deployment.yaml
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@example.com"
+        git add path/to/deployment.yaml
+        git commit -m "Actualizar imagen en deployment.yaml"
+        git push
 
 
