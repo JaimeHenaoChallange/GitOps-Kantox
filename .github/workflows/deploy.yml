@@ -38,14 +38,24 @@ jobs:
       with:
         cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i ./deployment.yaml
 
-    - name: Commit and Push Changes
+    - name: Confirmar Configuración Global de Git
+      run: |
+        git config --global user.name
+        git config --global user.email
+        git config --list
+
+    - name: Configurar Usuario de Git
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    - name: Commit y Push con HTTPS
+      run: |
         git add .
         git commit -m "Apply image name changes"
-        git remote add origin_with_token https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git
-        git push origin_with_token HEAD:${{ github.ref }}
+        git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git
+        git push origin HEAD:${{ github.ref }}
       env:
         YOUR_GITHUB_TOKEN: ${{ secrets.PAT }}
+
 
