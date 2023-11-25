@@ -28,6 +28,6 @@ jobs:
         sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:31|g' deployment.yaml
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@example.com"
-        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push origin HEAD:${{ github.ref }})
+        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push "https://${GH_TOKEN}@github.com/${{ github.repository }}.git")
       env:
         GH_TOKEN: ${{ secrets.PAT1 }}
