@@ -14,8 +14,14 @@ jobs:
     - name: Checkout Repositorio
       uses: actions/checkout@v2
 
+    - name: Mostrar Variables de Entorno
+      run: env
+
     - name: Listar Archivos en la Raíz
       run: ls
+
+    - name: Mostrar Contenido de deployment.yaml
+      run: cat deployment.yaml
 
     - name: Actualizar Imagen en deployment.yaml
       run: |
@@ -24,7 +30,8 @@ jobs:
         git config --global user.email "github-actions[bot]@example.com"
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push https://github.com/${{ github.repository }}.git)
       env:
-        GH_TOKEN: ${{ secrets.KUBE }}
+        GH_TOKEN: ${{ secrets.PAT }}
+
 
 
 
