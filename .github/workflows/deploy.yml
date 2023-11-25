@@ -25,9 +25,9 @@ jobs:
 
     - name: Actualizar Imagen en deployment.yaml
       run: |
-        sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${{ github.run_number }}|g' deployment.yaml
+        sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:31|g' deployment.yaml
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@example.com"
-        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push https://${GH_TOKEN}@github.com/${{ github.repository }}.git)
+        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push origin HEAD:${{ github.ref }})
       env:
         GH_TOKEN: ${{ secrets.PAT1 }}
