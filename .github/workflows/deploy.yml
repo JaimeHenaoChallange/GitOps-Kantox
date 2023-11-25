@@ -17,11 +17,18 @@ jobs:
           repository: JaimeHenaoChallange/GitOps-Kantox
           ref: main
 
+      - name: Get Image Tag
+        id: get-image-tag
+        run: |
+          # Obtener la última ejecución del trabajo CI y extraer la etiqueta de imagen
+          IMAGE_TAG=$(curl -s "https://api.github.com/repos/JaimeHenaoChallange/GitOps-Kantox/actions/workflows/CI.yaml/runs?event=workflow_run&status=success&branch=main" | jq -r '.workflow_runs[0].head_commit.id')
+          echo "::set-output name=image_tag::${IMAGE_TAG}"
+
       - name: Update Deployment
         run: |
           # Obtener la etiqueta de imagen de la salida del trabajo CI
-          IMAGE_TAG=$(curl -s "${{ github.event.repository.url }}/actions/runs/${{ github.event.workflow_run.id }}/jobs/build" | jq -r '.steps[] | select(.name == "Build and push") | .outputs.image_tag')
-          
+          IMAGE_TAG=${{ steps.get-image-tag.outputs.image_tag }}
+
           # Actualizar deployment.yaml con la nueva etiqueta de imagen
           sed -i "s|image: .*|image: ${GITHUB_ACTOR}/kantox-dev:${IMAGE_TAG}|" deployment.yaml
 
