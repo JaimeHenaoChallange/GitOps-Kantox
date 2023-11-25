@@ -1,43 +1,3 @@
-# name: Repository Dispatch
-
-# on:
-#   repository_dispatch:
-#     types: [new-image]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - name: Update Image Version
-#       id: imgupd
-#       uses: mikefarah/yq@master
-#       with:
-#         cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i ./deployment.yaml
-
-#     - name: Confirmar Configuración Global de Git
-#       run: |
-#         git config --global user.name || echo "Failed to get user.name"
-#         git config --global user.email || echo "Failed to get user.email"
-#         git config --list || echo "Failed to get git configuration"
-
-#     - name: Configurar Usuario de Git
-#       run: |
-#         git config --global user.name "github-actions[bot]" || echo "Failed to set user.name"
-#         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" || echo "Failed to set user.email"
-
-#     - name: Commit y Push con HTTPS
-#       run: |
-#         git add .
-#         git status
-#         git commit -m "Apply image name changes"
-#         git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git || echo "Failed to set remote URL"
-#         git push origin HEAD:${{ github.ref }} || echo "Failed to push changes"
-#       env:
-#         YOUR_GITHUB_TOKEN: ${{ secrets.PAT }}
-
 name: Actualizar Imagen de Deployment
 
 on:
@@ -59,12 +19,13 @@ jobs:
 
     - name: Actualizar Imagen en deployment.yaml
       run: |
-        sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:new-image-tag|g' deployment.yaml
+        sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${{ github.run_number }}|g' deployment.yaml
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@example.com"
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push https://github.com/${{ github.repository }}.git)
       env:
         GH_TOKEN: ${{ secrets.PAT }}
+
 
 
 
