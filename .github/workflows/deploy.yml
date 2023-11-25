@@ -40,22 +40,24 @@ jobs:
 
     - name: Confirmar Configuración Global de Git
       run: |
-        git config --global user.name
-        git config --global user.email
-        git config --list
+        git config --global user.name || echo "Failed to get user.name"
+        git config --global user.email || echo "Failed to get user.email"
+        git config --list || echo "Failed to get git configuration"
 
     - name: Configurar Usuario de Git
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]" || echo "Failed to set user.name"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" || echo "Failed to set user.email"
 
     - name: Commit y Push con HTTPS
       run: |
         git add .
+        git status
         git commit -m "Apply image name changes"
-        git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git
-        git push origin HEAD:${{ github.ref }}
+        git remote set-url origin https://${{ secrets.PAT }}@github.com/JaimeHenaoChallange/GitOps-Kantox.git || echo "Failed to set remote URL"
+        git push origin HEAD:${{ github.ref }} || echo "Failed to push changes"
       env:
         YOUR_GITHUB_TOKEN: ${{ secrets.PAT }}
+
 
 
