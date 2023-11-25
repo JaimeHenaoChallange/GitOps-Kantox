@@ -1,40 +1,35 @@
-name: Update Deployment
+name: Actualizar Imagen de Deployment
 
 on:
   workflow_run:
     workflows: ["CI"]
     types:
       - completed
-  push:
-    branches:
-      - main
 
 jobs:
   update-deployment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          repository: JaimeHenaoChallange/GitOps-Kantox
-          ref: main
+    - name: Checkout Repositorio
+      uses: actions/checkout@v2
 
-      - name: Get Image Tag
-        id: get-image-tag
-        run: |
-          IMAGE_TAG=$(curl -s "https://api.github.com/repos/JaimeHenaoChallange/GitOps-Kantox/actions/workflows/CI.yaml/runs?event=workflow_run&status=success&branch=main" | jq -r '.workflow_runs[0].head_commit.id')
-          echo "::set-output name=image_tag::${IMAGE_TAG}"
+    - name: Mostrar Variables de Entorno
+      run: env
 
-      - name: Update Deployment
-        run: |
-          IMAGE_TAG=${{ steps.get-image-tag.outputs.image_tag }}
-          sed -i "s|image: .*|image: ${GITHUB_ACTOR}/kantox-dev:${IMAGE_TAG}|" deployment.yaml
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git config user.name "${{ github.actor }}"
-          git add deployment.yaml
-          git diff --quiet || git commit -m "Actualizar imagen en deployment.yaml"
-          git push
+    - name: Listar Archivos en la Raíz
+      run: ls
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT1 }}
+    - name: Mostrar Contenido de deployment.yaml
+      run: cat deployment.yaml
+
+    - name: Configurar Credenciales de GitHub
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@example.com"
+
+    - name: Actualizar Imagen en deployment.yaml
+      run: |
+        NEW_TAG=${{ github.run_number }}
+        sed -i "s|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${NEW_TAG}|g" deployment.yaml
+        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
