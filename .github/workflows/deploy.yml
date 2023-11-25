@@ -1,4 +1,4 @@
-name: Actualizar Imagen de Deployment
+name: Update Deployment
 
 on:
   workflow_run:
@@ -11,25 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repositorio
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          repository: JaimeHenaoChallange/GitOps-Kantox
+          ref: main
 
-    - name: Mostrar Variables de Entorno
-      run: env
+      - name: Update Deployment
+        run: |
+          # Obtener la etiqueta de imagen de la salida del trabajo CI
+          IMAGE_TAG=$(curl -s "${{ github.event.repository.url }}/actions/runs/${{ github.event.workflow_run.id }}/jobs/build" | jq -r '.steps[] | select(.name == "Build and push") | .outputs.image_tag')
+          
+          # Actualizar deployment.yaml con la nueva etiqueta de imagen
+          sed -i "s|image: .*|image: ${GITHUB_ACTOR}/kantox-dev:${IMAGE_TAG}|" deployment.yaml
 
-    - name: Listar Archivos en la Raíz
-      run: ls
+          # Hacer commit y push de los cambios
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git add deployment.yaml
+          git commit -m "Actualizar etiqueta de imagen en deployment.yaml"
+          git push
 
-    - name: Mostrar Contenido de deployment.yaml
-      run: cat deployment.yaml
-
-    - name: Configurar Credenciales de GitHub
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@example.com"
-
-    - name: Actualizar Imagen en deployment.yaml
-      run: |
-        NEW_TAG=${{ github.run_number }}
-        sed -i "s|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${NEW_TAG}|g" deployment.yaml
-        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT1 }}
