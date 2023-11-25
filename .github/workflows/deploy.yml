@@ -1,4 +1,4 @@
-name: Update Deployment
+name: Actualizar Imagen de Deployment
 
 on:
   workflow_run:
@@ -11,33 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          repository: JaimeHenaoChallange/GitOps-Kantox
-          ref: main
+    - name: Checkout Repositorio
+      uses: actions/checkout@v2
 
-      - name: Get Image Tag
-        id: get-image-tag
-        run: |
-          # Obtener la última ejecución del trabajo CI y extraer la etiqueta de imagen
-          IMAGE_TAG=$(curl -s "https://api.github.com/repos/JaimeHenaoChallange/GitOps-Kantox/actions/workflows/CI.yaml/runs?event=workflow_run&status=success&branch=main" | jq -r '.workflow_runs[0].head_commit.id')
-          echo "::set-output name=image_tag::${IMAGE_TAG}"
+    - name: Mostrar Variables de Entorno
+      run: env
 
-      - name: Update Deployment
-        run: |
-          # Obtener la etiqueta de imagen de la salida del trabajo CI
-          IMAGE_TAG=${{ steps.get-image-tag.outputs.image_tag }}
+    - name: Listar Archivos en la Raíz
+      run: ls
 
-          # Actualizar deployment.yaml con la nueva etiqueta de imagen
-          sed -i "s|image: .*|image: ${GITHUB_ACTOR}/kantox-dev:${IMAGE_TAG}|" deployment.yaml
+    - name: Mostrar Contenido de deployment.yaml
+      run: cat deployment.yaml
 
-          # Hacer commit y push de los cambios
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git config user.name "${{ github.actor }}"
-          git add deployment.yaml
-          git commit -m "Actualizar etiqueta de imagen en deployment.yaml"
-          git push
+    - name: Configurar Credenciales de GitHub
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@example.com"
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT1 }}
+    - name: Actualizar Imagen en deployment.yaml
+      run: |
+        NEW_TAG=${{ github.run_number }}
+        sed -i "s|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${NEW_TAG}|g" deployment.yaml
+        git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
