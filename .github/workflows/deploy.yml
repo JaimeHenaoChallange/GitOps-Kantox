@@ -59,10 +59,11 @@ jobs:
 
     - name: Actualizar Imagen en deployment.yaml
       run: |
-        sed -i 's|old-image:tag|new-image:tag|g' deployment.yaml
+        sed -i 's|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:new-image-tag|g' deployment.yaml
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@example.com"
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
+
 
 
 
