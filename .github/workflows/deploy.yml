@@ -75,18 +75,18 @@ jobs:
         git status
         git log
 
-    - name: Configurar Identidad de Usuario Git
-      run: |
-        git config user.name "Jaime Henao"
-        git config user.email "jaimehenao8126@outlook.com"
+    - name: Obtener la última versión de la imagen
+      id: get_latest_image
+      run: echo "::set-output name=latest_image::$(grep -E '^ *image:' deployment.yaml | awk '{print $2}' | sort -V | tail -n 1)"
 
     - name: Actualizar Imagen en deployment.yaml
       run: |
         NEW_TAG=${{ github.run_number }}
-        sed -i "s|image: jaimehenao8126/kantox-dev:42|image: jaimehenao8126/kantox:${NEW_TAG}|g" deployment.yaml
+        sed -i "s|image: ${{ steps.get_latest_image.outputs.latest_image }}|image: jaimehenao8126/kantox:${NEW_TAG}|g" deployment.yaml
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
     
     - name: Debug Git Diff
       run: git diff deployment.yaml
+
 
 
