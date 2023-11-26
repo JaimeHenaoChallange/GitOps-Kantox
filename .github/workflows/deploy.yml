@@ -46,12 +46,3 @@ jobs:
 
     - name: Debug Git Diff
       run: git diff deployment.yaml
-
-# Add error handling and conditions
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
