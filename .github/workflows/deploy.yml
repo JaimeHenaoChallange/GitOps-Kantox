@@ -68,7 +68,7 @@ jobs:
       run: |
         set -e
         NEW_TAG=${{ github.run_number }}
-        sed -i "s|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${NEW_TAG}|g" deployment.yaml
+        sed -i "s|image: jaimehenao8126/kantox-dev:42|image: jaimehenao8126/kantox:${NEW_TAG}|g" deployment.yaml
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
     
     - name: Debug Git Diff
