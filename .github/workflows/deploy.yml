@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Actualizar Repositorio Local
-      run: git pull origin main
-
     - name: Checkout Repositorio
       uses: actions/checkout@v2
 
