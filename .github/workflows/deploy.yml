@@ -55,9 +55,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Actualizar Repositorio Local
-      run: git pull origin main
-
     - name: Checkout Repositorio
       uses: actions/checkout@v2
 
@@ -84,9 +81,11 @@ jobs:
         NEW_TAG=${{ github.run_number }}
         sed -i "s|image: ${{ steps.get_latest_image.outputs.latest_image }}|image: jaimehenao8126/kantox:${NEW_TAG}|g" deployment.yaml
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
-    
+
     - name: Debug Git Diff
       run: git diff deployment.yaml
+
+
 
 
 
