@@ -21,17 +21,10 @@ jobs:
 
     - name: Get Latest Image Version
       id: get_latest_image
-      run: echo "::set-output name=latest_image::$(grep -E '^ *image:' deployment.yaml | awk '{print $2}' | sort -V | tail -n 1)"
+      run: echo "::set-output name=latest_image::$(grep -E '^ *image:' deployment.yaml | awk '{print $2}' | sort -V | tail -n 1 | cut -d ':' -f 2 | cut -d 'v' -f 2)"
 
     - name: Update Image in deployment.yaml
       run: |
-        NEW_TAG=$(grep -E '^ *image:' deployment.yaml | awk '{print $2}' | sort -V | tail -n 1 | awk -F: '{print $2}' | awk -Fv '{print $2}')
         NEW_TAG=$((NEW_TAG + 1))
         sed -i "s|image: ${{ steps.get_latest_image.outputs.latest_image }}|image: jaimehenao8126/kantox:v${NEW_TAG}|g" deployment.yaml
         git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Update image in deployment.yaml" && git push)
-
-
-
-
-
-
