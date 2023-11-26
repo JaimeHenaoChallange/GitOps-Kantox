@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-world-container
-        image: jaimehenao8126/kantox:65
+        image: jaimehenao8126/kantox:64
 
         ports:
         - containerPort: 80
