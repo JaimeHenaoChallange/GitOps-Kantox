@@ -36,39 +36,3 @@ jobs:
         repository: JaimeHenaoChallange/GitOps-Kantox
         event-type: new-image
         client-payload: '{"image": "${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"}'
-
-name: Actualizar Imagen de Deployment
-
-on:
- workflow_run:
-   workflows: ["CI"]
-   types:
-     - completed
-
-jobs:
-  update-deployment:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repositorio
-      uses: actions/checkout@v2
-
-    - name: Mostrar Variables de Entorno
-      run: env
-
-    - name: Listar Archivos en la Raíz
-      run: ls
-
-    - name: Mostrar Contenido de deployment.yaml
-      run: cat deployment.yaml
-
-    - name: Configurar Credenciales de GitHub
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@example.com"
-
-    - name: Actualizar Imagen en deployment.yaml
-    run: |
-      NEW_TAG=${{ github.run_number }}
-      sed -i "s|image: jaimehenao8126/kantox-dev:26|image: jaimehenao8126/kantox-dev:${NEW_TAG}|g" deployment.yaml
-      git diff --exit-code deployment.yaml || (git add deployment.yaml && git commit -m "Actualizar imagen en deployment.yaml" && git push)
